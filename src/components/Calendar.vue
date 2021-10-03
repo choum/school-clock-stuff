@@ -87,10 +87,10 @@ export default {
       sched.forEach(obj => {
         if (obj.Dates.includes(this.date)) {
           console.log(1);
-          this.schedule = obj.DisplayName;
+          this.schedule = obj;
           sched.length = 0;
         } else if (obj.WDays.includes(this.jsDays[day])) {
-          this.schedule = obj.DisplayName;
+          this.schedule = obj;
         }
       });
     },
