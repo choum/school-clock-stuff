@@ -2,7 +2,7 @@
   <div class="elevation-9">
     <div>
       <v-toolbar flat color="primary" dark>
-        <v-toolbar-title>Edit Schedule</v-toolbar-title>
+        <v-toolbar-title>Schedule</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-select
           @change="changedValue($event)"
@@ -15,83 +15,101 @@
           return-object
           single-line
         ></v-select>
+        <v-divider class="mx-4" inset vertical></v-divider
+        ><v-btn elevation="2" light>Add Schedule</v-btn>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-btn elevation="2">Delete Schedule</v-btn>
       </v-toolbar>
       <v-container fluid v-show="isSelected">
-        <h2>Schedule Name</h2>
+        <h2>Name</h2>
         <v-text-field
           v-model="schedName"
           color="purple darken-2"
           required
           @change="changeSchedName($event)"
         ></v-text-field>
-        <h2>Schedule Day</h2>
+
         <v-row>
-          <v-col cols="2">
-            <v-checkbox
-              v-model="selectedDays"
-              :disabled="disabledDays[0]"
-              label="Monday"
-              value="Monday"
-              @change="changeDay($event)"
-            ></v-checkbox>
+          <v-col cols="8">
+            <h2>Day</h2>
+            <v-row>
+              <v-col cols="4">
+                <v-checkbox
+                  v-model="selectedDays"
+                  :disabled="disabledDays[0]"
+                  label="Monday"
+                  value="Monday"
+                  @change="changeDay($event)"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="4">
+                <v-checkbox
+                  v-model="selectedDays"
+                  :disabled="disabledDays[1]"
+                  label="Tuesday"
+                  value="Tuesday"
+                  @change="changeDay($event)"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="4">
+                <v-checkbox
+                  v-model="selectedDays"
+                  :disabled="disabledDays[2]"
+                  label="Wednesday"
+                  value="Wednesday"
+                  @change="changeDay($event)"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="4">
+                <v-checkbox
+                  v-model="selectedDays"
+                  :disabled="disabledDays[3]"
+                  @change="changeDay($event)"
+                  label="Thursday"
+                  value="Thursday"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="4">
+                <v-checkbox
+                  v-model="selectedDays"
+                  :disabled="disabledDays[4]"
+                  @change="changeDay($event)"
+                  label="Friday"
+                  value="Friday"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="4">
+                <v-checkbox
+                  v-model="selectedDays"
+                  :disabled="disabledDays[5]"
+                  @change="changeDay($event)"
+                  label="Saturday"
+                  value="Saturday"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="4">
+                <v-checkbox
+                  v-model="selectedDays"
+                  :disabled="disabledDays[6]"
+                  @change="changeDay($event)"
+                  label="Sunday"
+                  value="Sunday"
+                ></v-checkbox>
+              </v-col>
+            </v-row>
           </v-col>
-          <v-col cols="2">
-            <v-checkbox
-              v-model="selectedDays"
-              :disabled="disabledDays[1]"
-              label="Tuesday"
-              value="Tuesday"
-              @change="changeDay($event)"
-            ></v-checkbox>
-          </v-col>
-          <v-col cols="2">
-            <v-checkbox
-              v-model="selectedDays"
-              :disabled="disabledDays[2]"
-              label="Wednesday"
-              value="Wednesday"
-              @change="changeDay($event)"
-            ></v-checkbox>
-          </v-col>
-          <v-col cols="2">
-            <v-checkbox
-              v-model="selectedDays"
-              :disabled="disabledDays[3]"
-              @change="changeDay($event)"
-              label="Thursday"
-              value="Thursday"
-            ></v-checkbox>
-          </v-col>
-          <v-col cols="2">
-            <v-checkbox
-              v-model="selectedDays"
-              :disabled="disabledDays[4]"
-              @change="changeDay($event)"
-              label="Friday"
-              value="Friday"
-            ></v-checkbox>
-          </v-col>
-          <v-col cols="2">
-            <v-checkbox
-              v-model="selectedDays"
-              :disabled="disabledDays[5]"
-              @change="changeDay($event)"
-              label="Saturday"
-              value="Saturday"
-            ></v-checkbox>
-          </v-col>
-          <v-col cols="2">
-            <v-checkbox
-              v-model="selectedDays"
-              :disabled="disabledDays[6]"
-              @change="changeDay($event)"
-              label="Sunday"
-              value="Sunday"
-            ></v-checkbox>
+          <v-col cols="3">
+            <h2>Color</h2>
+            <v-color-picker
+              dot-size="25"
+              hide-inputs
+              swatches-max-height="200"
+              v-model="color"
+              @input="changeColor($event)"
+            ></v-color-picker>
           </v-col>
         </v-row>
+        <v-divider></v-divider>
       </v-container>
     </div>
     <v-data-table
@@ -104,7 +122,7 @@
     >
       <template v-slot:top>
         <v-toolbar flat>
-          <h2>Schedule Day</h2>
+          <h2>Events</h2>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on, attrs }">
@@ -205,10 +223,12 @@ export default {
 import json from "../assets/data.json";
 export default {
   data: () => ({
+    finalData: [],
     jsonData: json,
     dialog: false,
     schedule: "",
     dialogDelete: false,
+    color: "",
     headers: [
       {
         text: "Description",
@@ -302,33 +322,40 @@ export default {
       // save data into jsonData obj
       let sched = this.jsonData.Schedules;
       if (sched.DisplayName === this.schedule.Displayname) {
-        var curEvents = this.schoolEvents;
-        curEvents.forEach(obj => {
-          if (!Number.isInteger(obj.Time)) {
-            let a = obj.Time.split(":");
-            let seconds = +a[0] * 60 * 60 + +a[1] * 60 + +a[2];
-            obj.Time = seconds;
-          }
-        });
+        let curEvents = this.convertToSeconds(this.schoolEvents);
         sched.Events = curEvents;
       }
       this.jsonData.Schedules = sched;
       this.close();
     },
 
+    convertToSeconds(curEvents) {
+      curEvents.forEach(obj => {
+        if (!Number.isInteger(obj.Time)) {
+          let a = obj.Time.split(":");
+          let seconds = +a[0] * 60 * 60 + +a[1] * 60 + +a[2];
+          obj.Time = seconds;
+        }
+      });
+      return curEvents;
+    },
     changedValue(event) {
       var usedDays = [];
 
       // loop through jsonData
-      this.jsonData.Schedules.forEach(obj => {
+      var curSchedule = [...this.jsonData.Schedules];
+      curSchedule.forEach(obj => {
         if (event.DisplayName === obj.DisplayName) {
           // get the current events and which days are used for this schedule
-          let curEvents = obj.Events;
-          curEvents.forEach(obj => {
-            if (Number.isInteger(obj.Time)) {
-              obj.Time = new Date(obj.Time * 1000).toISOString().substr(11, 8);
+          let curEvents = [...obj.Events];
+          curEvents.forEach(eventObj => {
+            if (Number.isInteger(eventObj.Time)) {
+              eventObj.Time = new Date(eventObj.Time * 1000)
+                .toISOString()
+                .substr(11, 8);
             }
           });
+          this.color = obj.Color;
           this.schoolEvents = curEvents;
           this.selectedDays = obj.WDays;
           this.schedName = obj.DisplayName;
@@ -405,8 +432,16 @@ export default {
         });
         items.sort((a, b) => a.Time.localeCompare(b.Time));
       }
-      console.log(this.jsonData);
       return items;
+    },
+    changeColor(color) {
+      let sched = this.jsonData.Schedules;
+      sched.forEach(obj => {
+        if (obj.DisplayName === this.schedule.DisplayName) {
+          obj.Color = color;
+        }
+      });
+      this.jsonData.Schedules = sched;
     }
   }
 };

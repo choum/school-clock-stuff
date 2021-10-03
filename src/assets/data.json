@@ -6,7 +6,7 @@
     "Schedules": [
         {
             "Dates": [
-                1210706
+
             ],
             "Description": "Split-Assembly Day",
             "DisplayName": "Assembly Day",
@@ -116,7 +116,8 @@
             ],
             "Name": "Assembly Day",
             "Reason": 2,
-            "WDays": ["Sunday"]
+            "WDays": ["Sunday"],
+            "Color": "#32a852"
         },
         {
             "Dates": [],
@@ -204,7 +205,8 @@
             ],
             "Name": "Normal Day",
             "Reason": 1,
-            "WDays": ["Monday", "Tuesday", "Thursday", "Friday"]
+            "WDays": ["Monday", "Tuesday", "Thursday", "Friday"],
+            "Color": "#db9130"
         },
         {
             "Dates": [],
@@ -304,7 +306,8 @@
             ],
             "Name": "Minimum Day",
             "Reason": 1,
-            "WDays": ["Wednesday"]
+            "WDays": ["Wednesday"],
+            "Color": "#3240ab"
         }
     ],
     "Timezone": -7

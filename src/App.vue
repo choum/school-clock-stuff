@@ -12,12 +12,7 @@
       <div id="border">
         <v-row no-gutters>
           <v-col cols="10" sm="6" md="6" id="left">
-            <AddSchedule />
-
-            <div id="spacer">
-              <v-divider></v-divider>
-              <Table />
-            </div>
+            <Table />
           </v-col>
           <v-col cols="8" md="6">
             <Calendar />
@@ -29,14 +24,12 @@
 </template>
 
 <script>
-import AddSchedule from "./components/AddSchedule";
 import Table from "./components/Table";
 import Calendar from "./components/Calendar";
 export default {
   name: "App",
 
   components: {
-    AddSchedule,
     Table,
     Calendar
   },
@@ -48,7 +41,7 @@ export default {
 </script>
 <style>
 #border {
-  margin: 2%;
+  margin: 1%;
 }
 #left {
   padding-right: 2%;

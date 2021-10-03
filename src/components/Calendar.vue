@@ -5,10 +5,11 @@
       v-model="date"
       full-width
       @change="changeDate()"
+      :events="functionEvents"
     ></v-date-picker>
     <v-container>
       <v-select
-        @change="changedValue()"
+        @change="changeValue()"
         v-model="schedule"
         :items="items"
         item-text="DisplayName"
@@ -35,7 +36,6 @@ export default {
     jsonData: json,
     schedule: "",
     jsDays: [
-      "Sunday",
       "Monday",
       "Tuesday",
       "Wednesday",
@@ -43,7 +43,8 @@ export default {
       "Friday",
       "Saturday",
       "Sunday"
-    ]
+    ],
+    dayColors: ["", "", "", "", "", "", ""]
   }),
 
   created() {
@@ -53,19 +54,45 @@ export default {
     initialize() {
       this.items = this.jsonData.Schedules;
       this.schoolEvents = [];
+      let sched = this.jsonData.Schedules;
+      sched.forEach(obj => {
+        if (obj.WDays.includes("Sunday")) {
+          this.dayColors[6] = obj.Color;
+        }
+        if (obj.WDays.includes("Monday")) {
+          this.dayColors[0] = obj.Color;
+        }
+        if (obj.WDays.includes("Tuesday")) {
+          this.dayColors[1] = obj.Color;
+        }
+        if (obj.WDays.includes("Wednesday")) {
+          this.dayColors[2] = obj.Color;
+        }
+        if (obj.WDays.includes("Thursday")) {
+          this.dayColors[3] = obj.Color;
+        }
+        if (obj.WDays.includes("Friday")) {
+          this.dayColors[4] = obj.Color;
+        }
+        if (obj.WDays.includes("Saturday")) {
+          this.dayColors[5] = obj.Color;
+        }
+      });
     },
     changeDate() {
       let sched = this.jsonData.Schedules;
       const selectedDate = new Date(Date.parse(this.date));
       const day = selectedDate.getDay();
-
       //change selected to date
       sched.forEach(obj => {
-        if (obj.WDays.includes(this.jsDays[day])) {
+        if (obj.Dates.includes(this.date)) {
+          console.log(1);
+          this.schedule = obj.DisplayName;
+          sched.length = 0;
+        } else if (obj.WDays.includes(this.jsDays[day])) {
           this.schedule = obj.DisplayName;
         }
       });
-      console.log(this.date);
     },
     changeValue() {
       let sched = this.jsonData.Schedules;
@@ -77,11 +104,30 @@ export default {
           obj.Dates = newDates;
         }
         //add date to schedule
-        if (obj.DisplayName === this.schedule) {
+        if (obj.DisplayName === this.schedule.DisplayName) {
           obj.Dates.push(this.date);
         }
       });
-      this.jsonDate.Schedules = sched;
+      this.jsonData.Schedules = sched;
+    },
+    functionEvents(date) {
+      var day = new Date(date).getDay();
+      var curColor = "";
+      let sched = this.jsonData.Schedules;
+      let bool = false;
+      sched.forEach(obj => {
+        if (obj.Dates.includes(date)) {
+          bool = true;
+          curColor = obj.Color;
+        }
+      });
+      if (bool) {
+        console.log(1);
+        return curColor;
+      } else {
+        console.log(2);
+        return this.dayColors[day];
+      }
     }
   }
 };
